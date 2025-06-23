@@ -5,9 +5,29 @@ import {
   ListToolsRequestSchema,
   Tool,
 } from '@modelcontextprotocol/sdk/types.js';
+import { readFileSync } from 'fs';
+import { dirname, join } from 'path';
+import { fileURLToPath } from 'url';
 
 import { MockServerManager } from './services/MockServerManager.js';
-import { getAllTools, getToolHandler, isValidToolName } from './tools/index.js';
+import {
+  ADD_ENDPOINT_TOOL,
+  LIST_ENDPOINTS_TOOL,
+  REMOVE_ENDPOINT_TOOL,
+  SET_ENDPOINT_ERROR_TOOL,
+  START_MOCK_SERVER_TOOL,
+  STOP_MOCK_SERVER_TOOL,
+  TOGGLE_ENDPOINT_ERROR_TOOL,
+  getAllTools,
+  getToolHandler,
+  isValidToolName,
+} from './tools/index.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const packagePath = join(__dirname, '..', 'package.json');
+const packageJson = JSON.parse(readFileSync(packagePath, 'utf-8'));
+const { version } = packageJson;
 
 class MockingbirdServer {
   private server: Server;
@@ -15,20 +35,29 @@ class MockingbirdServer {
   private tools: Tool[];
 
   constructor() {
+    this.serverManager = new MockServerManager();
+    this.tools = getAllTools();
+
     this.server = new Server(
       {
         name: 'api-mockingbird',
-        version: '0.0.0',
+        version,
       },
       {
         capabilities: {
-          tools: {},
+          tools: {
+            [START_MOCK_SERVER_TOOL.name]: START_MOCK_SERVER_TOOL,
+            [STOP_MOCK_SERVER_TOOL.name]: STOP_MOCK_SERVER_TOOL,
+            [ADD_ENDPOINT_TOOL.name]: ADD_ENDPOINT_TOOL,
+            [REMOVE_ENDPOINT_TOOL.name]: REMOVE_ENDPOINT_TOOL,
+            [LIST_ENDPOINTS_TOOL.name]: LIST_ENDPOINTS_TOOL,
+            [SET_ENDPOINT_ERROR_TOOL.name]: SET_ENDPOINT_ERROR_TOOL,
+            [TOGGLE_ENDPOINT_ERROR_TOOL.name]: TOGGLE_ENDPOINT_ERROR_TOOL,
+          },
         },
       }
     );
 
-    this.serverManager = new MockServerManager();
-    this.tools = getAllTools();
     this.setupHandlers();
   }
 
