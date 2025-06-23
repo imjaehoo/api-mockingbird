@@ -1,6 +1,6 @@
 {
   "name": "api-mockingbird",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "MCP server for creating HTTP mock APIs for frontend development",
   "main": "dist/index.js",
   "type": "module",
