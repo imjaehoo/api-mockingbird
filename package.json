@@ -4,6 +4,22 @@
   "description": "MCP server for creating HTTP mock APIs for frontend development",
   "main": "dist/index.js",
   "type": "module",
+  "bin": {
+    "api-mockingbird": "./dist/index.js"
+  },
+  "files": [
+    "dist/",
+    "README.md",
+    "LICENSE"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/imjaehoo/api-mockingbird.git"
+  },
+  "bugs": {
+    "url": "https://github.com/imjaehoo/api-mockingbird/issues"
+  },
+  "homepage": "https://github.com/imjaehoo/api-mockingbird#readme",
   "scripts": {
     "build": "tsc",
     "dev": "tsx src/index.ts",
@@ -12,23 +28,33 @@
     "format": "prettier --write src/**/*.ts",
     "inspect": "npx @modelcontextprotocol/inspector node dist/index.js",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "release": "semantic-release",
+    "release:dry-run": "semantic-release --dry-run"
   },
   "keywords": [
     "mcp",
     "mock",
     "api",
     "development",
-    "frontend"
+    "frontend",
+    "testing",
+    "server",
+    "http",
+    "mockingbird"
   ],
   "license": "MIT",
   "dependencies": {
-    "@faker-js/faker": "^9.8.0",
     "@modelcontextprotocol/sdk": "^1.13.0",
     "cors": "^2.8.5",
     "express": "^5.1.0"
   },
   "devDependencies": {
+    "@semantic-release/commit-analyzer": "^13.0.1",
+    "@semantic-release/git": "^10.0.1",
+    "@semantic-release/github": "^11.0.3",
+    "@semantic-release/npm": "^12.0.1",
+    "@semantic-release/release-notes-generator": "^14.0.3",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
@@ -37,6 +63,7 @@
     "@typescript-eslint/parser": "^8.34.1",
     "eslint": "^9.29.0",
     "prettier": "^3.6.0",
+    "semantic-release": "^24.2.5",
     "tsx": "^4.20.3",
     "typescript": "^5.8.3",
     "vitest": "^3.2.4"

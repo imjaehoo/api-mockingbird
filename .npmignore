@@ -1,0 +1,33 @@
+# Source files
+src/
+tests/
+*.test.ts
+*.spec.ts
+
+# Development files
+.github/
+vitest.config.ts
+.releaserc.json
+eslint.config.js
+.prettierrc
+tsconfig.json
+
+# Cache and temp files
+.api-mockingbird.local/
+node_modules/
+.npm/
+.nyc_output/
+coverage/
+
+# Development artifacts
+*.log
+.DS_Store
+.env
+.env.local
+.env.*.local
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo

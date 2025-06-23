@@ -112,6 +112,8 @@ npm run lint
 npm run test
 npm run test:watch
 npm run inspect
+npm run release
+npm run release:dry-run
 ```
 
 ## Architecture
