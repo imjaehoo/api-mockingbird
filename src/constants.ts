@@ -11,3 +11,8 @@ export const HTTP_STATUS = {
 } as const;
 
 export const DEFAULT_HTTP_STATUS = HTTP_STATUS.OK;
+
+export const DELAY = {
+  MIN: 0,
+  MAX: 10_000,
+} as const;

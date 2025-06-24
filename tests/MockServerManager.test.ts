@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it } from 'vitest';
 import { HTTP_STATUS } from '../src/constants.js';
 import { MockServerManager } from '../src/services/MockServerManager.js';
 import { MockEndpoint, MockServerConfig } from '../src/types/index.js';
+import { delay } from '../src/utils/delay.js';
 
 describe('MockServerManager', () => {
   let manager: MockServerManager;
@@ -15,18 +16,16 @@ describe('MockServerManager', () => {
   });
 
   afterEach(async () => {
-    // Clean up any running servers
     try {
       await manager.stopServer(testPort);
       await manager.stopServer(testPort + 1); // For multi-server tests
     } catch (error) {
       // Ignore cleanup errors
     }
-    
+
     // Add small delay to ensure servers are fully stopped
-    await new Promise(resolve => setTimeout(resolve, 50));
-    
-    // Clean up config files
+    await delay(50);
+
     try {
       if (existsSync(configDir)) {
         rmSync(configDir, { recursive: true, force: true });
@@ -337,6 +336,103 @@ describe('MockServerManager', () => {
       );
 
       expect(success).toBe(false);
+    });
+  });
+
+  describe('Endpoint Delay', () => {
+    it('should apply delay to endpoint responses', async () => {
+      const config: MockServerConfig = { port: testPort };
+      await manager.startServer(config);
+
+      const endpointWithDelay: MockEndpoint = {
+        id: 'test-delay-id',
+        method: 'GET',
+        path: '/slow',
+        response: {
+          status: HTTP_STATUS.OK,
+          body: { message: 'slow response' },
+        },
+        delay: 100,
+      };
+
+      await manager.addEndpoint(testPort, endpointWithDelay);
+
+      const start = Date.now();
+      const response = await fetch(`http://localhost:${testPort}/slow`);
+      const duration = Date.now() - start;
+
+      expect(response.status).toBe(HTTP_STATUS.OK);
+      expect(duration).toBeGreaterThanOrEqual(90);
+
+      const data = await response.json();
+      expect(data).toEqual({ message: 'slow response' });
+    });
+
+    it('should return correct response body for endpoint', async () => {
+      const config: MockServerConfig = { port: testPort };
+      await manager.startServer(config);
+
+      const testBody = { message: 'test response', data: [1, 2, 3] };
+      const endpoint: MockEndpoint = {
+        id: 'test-body-id',
+        method: 'GET',
+        path: '/test-body',
+        response: {
+          status: HTTP_STATUS.OK,
+          body: testBody,
+        },
+      };
+
+      await manager.addEndpoint(testPort, endpoint);
+
+      const response = await fetch(`http://localhost:${testPort}/test-body`);
+      expect(response.status).toBe(HTTP_STATUS.OK);
+
+      const data = await response.json();
+      expect(data).toEqual(testBody);
+    });
+
+    it('should serve endpoints loaded from config file on server start', async () => {
+      const configData = {
+        port: testPort,
+        endpoints: [
+          {
+            id: 'test-id',
+            method: 'GET',
+            path: '/api/test',
+            response: {
+              status: 200,
+              body: { ok: true },
+              headers: { 'custom-header': 'test' },
+            },
+            delay: 100,
+          },
+        ],
+        updatedAt: new Date().toISOString(),
+      };
+
+      const { existsSync, mkdirSync, writeFileSync } = await import('fs');
+      if (!existsSync(configDir)) {
+        mkdirSync(configDir, { recursive: true });
+      }
+      writeFileSync(
+        `${configDir}/${testPort}.json`,
+        JSON.stringify(configData, null, 2)
+      );
+
+      const config: MockServerConfig = { port: testPort };
+      await manager.startServer(config);
+
+      const start = Date.now();
+      const response = await fetch(`http://localhost:${testPort}/api/test`);
+      const duration = Date.now() - start;
+
+      expect(response.status).toBe(200);
+      expect(response.headers.get('custom-header')).toBe('test');
+      expect(duration).toBeGreaterThanOrEqual(90);
+
+      const data = await response.json();
+      expect(data).toEqual({ ok: true });
     });
   });
 });

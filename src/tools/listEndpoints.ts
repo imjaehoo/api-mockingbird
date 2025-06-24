@@ -39,7 +39,8 @@ export async function handleListEndpoints(
           const errorInfo = ep.errorResponse
             ? ` [Error: ${ep.errorResponse.enabled ? 'ON' : 'OFF'}]`
             : '';
-          return `  ${ep.method} ${ep.path} → ${ep.response.status}${errorInfo}`;
+          const delayInfo = ep.delay ? ` [Delay: ${ep.delay}ms]` : '';
+          return `  ${ep.method} ${ep.path} → ${ep.response.status}${errorInfo}${delayInfo}`;
         })
         .join('\n');
 
@@ -67,7 +68,8 @@ export async function handleListEndpoints(
                     const errorInfo = ep.errorResponse
                       ? ` [Error: ${ep.errorResponse.enabled ? 'ON' : 'OFF'}]`
                       : '';
-                    return `    ${ep.method} ${ep.path} → ${ep.response.status}${errorInfo}`;
+                    const delayInfo = ep.delay ? ` [Delay: ${ep.delay}ms]` : '';
+                    return `    ${ep.method} ${ep.path} → ${ep.response.status}${errorInfo}${delayInfo}`;
                   })
                   .join('\n')
               : '    No endpoints configured';
