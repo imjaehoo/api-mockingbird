@@ -39,7 +39,9 @@ Starts server and auto-loads any saved endpoints for that port.
 
 ### `add_endpoint`
 
-Add or update a mock endpoint. If an endpoint with the same method and path exists, it will be replaced. Auto-saves configuration.
+Add or update a mock endpoint with response body, headers, and optional delay. If an endpoint with the same method and path exists, it will be replaced. Auto-saves configuration.
+
+Supports configurable response delay (0-10000ms) to simulate network latency and slow responses.
 
 ### `remove_endpoint`
 
@@ -68,21 +70,21 @@ Stop a running mock server.
    "Start a api-mockingbird server on port 4000"
 
 2. Add user endpoints:
-   "Add a GET /api/users api-mockingbird endpoint that returns a list of 5 users"
-   "Add a POST /api/users api-mockingbird endpoint that creates a user"
+   "Add a GET /api/users endpoint that returns a list of 5 users"
+   "Add a POST /api/users endpoint that creates a user"
 
 3. Update endpoints:
-   "Change api-mockingbird GET /api/users to return 10 users instead of 5"
+   "Change GET /api/users to return 10 users instead of 5"
    (same add_endpoint command replaces existing)
 
 4. Test your frontend:
    Your React app can now call http://localhost:4000/api/users
 
 5. Manage endpoints:
-   "Remove the api-mockingbird POST /api/users endpoint"
-   "Set a 500 server error for the GET /api/users api-mockingbird endpoint"
-   "Enable error response for api-mockingbird GET /api/users"
-   "Disable error response for api-mockingbird GET /api/users"
+   "Remove the POST /api/users endpoint"
+   "Set a 500 server error for the GET /api/users endpoint"
+   "Enable error response for GET /api/users"
+   "Disable error response for GET /api/users"
 ```
 
 ## Endpoint Management
