@@ -10,6 +10,7 @@ export interface MockEndpoint {
     headers?: Record<string, string>;
     body: unknown;
   };
+  delay?: number;
   errorResponse?: {
     enabled: boolean;
     status: number;

@@ -11,6 +11,7 @@ import {
   MockServerConfig,
   MockServerInstance,
 } from '../types/index.js';
+import { delay } from '../utils/delay.js';
 
 export class MockServerManager {
   private servers: Map<number, MockServer> = new Map();
@@ -219,6 +220,10 @@ export class MockServerManager {
 
     app[method](endpoint.path, async (_req: Request, res: Response) => {
       try {
+        if (endpoint.delay && endpoint.delay > 0) {
+          await delay(endpoint.delay);
+        }
+
         if (endpoint.errorResponse?.enabled) {
           return res.status(endpoint.errorResponse.status).json({
             error: endpoint.errorResponse.message,
